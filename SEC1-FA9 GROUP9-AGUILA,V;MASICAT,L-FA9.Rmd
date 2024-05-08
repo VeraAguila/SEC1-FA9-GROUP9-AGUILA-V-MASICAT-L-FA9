@@ -1,0 +1,110 @@
+---
+title: "Formative Assessment 9"
+author: "Vera Aguila and Lindsy Masicat"
+date: "2024-05-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 1
+A random variable _X_ is said to have the gamma distribution, or to be gamma distributed, if the density function is $f(x)= \left\{\begin{array}{lr} \frac{xα^{-1}e^{-x/β}}{β^{α}Γ(α)} & x > 0 \\0 & x\leq 0 \end{array}\right.$  $(α,β>0)$, where  Γ(α) is the gamma function. Show that the mean and variance of the gamma distribution are given by (a) $𝜇=αβ$, (b) $σ^{2}=αβ^{2}$.
+
+```{r}
+alpha <- 2  
+beta <- 3   
+
+meanofgamma<- alpha * beta
+
+varofgamma <- alpha * beta^2
+
+cat("Mean (μ) of the gamma distribution:", meanofgamma, "\n")
+cat("Variance (σ^2) of the gamma distribution:", varofgamma, "\n")
+
+library(ggplot2)
+
+x <- seq(0, 20, length.out = 1000)
+
+pdf <- dgamma(x, shape = alpha, scale = beta)
+
+mean_gamma <- alpha * beta
+var_gamma <- alpha * beta^2
+
+df <- data.frame(x = x, pdf = pdf)
+
+ggplot(df, aes(x)) +
+  geom_line(aes(y = pdf), color = "blue", size = 1) +
+  geom_vline(xintercept = mean_gamma, linetype = "dashed", color = "red", size = 1) +
+  annotate("text", x = mean_gamma + 1, y = max(pdf), label = paste("Mean (μ) =", round(mean_gamma, 2)), color = "red") +
+  annotate("text", x = mean_gamma + 1, y = max(pdf) * 0.9, label = paste("Variance (σ^2) =", round(var_gamma, 2)), color = "blue") +
+  labs(title = "Gamma Distribution", x = "x", y = "Probability Density") +
+  theme_minimal()
+
+```
+
+
+## Problem 2
+Prove that the mean and variance of a binomially distributed random variable are, respectively  $𝜇= np$ and and $σ^{2}=npq$.
+ 
+```{r}
+n <- 10    
+p <- 0.5   
+
+binomial_samples <- rbinom(10000, size = n, prob = p)
+
+meanempirical <- mean(binomial_samples)
+varempirical <- var(binomial_samples)
+
+cat("Empirical Mean (μ) of the binomial distribution:", meanempirical, "\n")
+cat("Empirical Variance (σ^2) of the binomial distribution:", varempirical, "\n")
+
+meantheoretical <- n * p
+vartheoretical <- n * p * (1 - p)
+
+cat("Theoretical Mean (μ) of the binomial distribution:", meantheoretical, "\n")
+cat("Theoretical Variance (σ^2) of the binomial distribution:", vartheoretical, "\n")
+
+```
+
+
+
+## Problem 3
+Establish the validity of the Poisson approximation to the binomial distribution.
+
+```{r}
+library(ggplot2)
+
+n <- 1000 
+p <- 0.01 
+
+# Generate data from binomial distribution
+samplesofbinomial <- rbinom(10000, size = n, prob = p)
+
+# Calculate the mean and variance of the binomial distribution
+meanbinomial <- n * p
+varbinomial <- n * p * (1 - p)
+
+# Plot histogram of binomial samples
+ggplot(data.frame(x = samplesofbinomial), aes(x)) +
+  geom_histogram(binwidth = 1, fill = "skyblue", color = "black", alpha = 0.8) +
+  ggtitle("Histogram of Binomial Distribution") +
+  labs(x = "Value", y = "Frequency") +
+  theme_minimal()
+
+# Generate data from Poisson distribution with the same mean
+lambda <- meanbinomial
+poissonsamples <- rpois(10000, lambda)
+
+# Plot histogram of Poisson samples
+ggplot(data.frame(x = poissonsamples), aes(x)) +
+  geom_histogram(binwidth = 1, fill = "salmon", color = "black", alpha = 0.8) +
+  ggtitle("Histogram of Poisson Distribution") +
+  labs(x = "Value", y = "Frequency") +
+  theme_minimal()
+
+```
+
+
+
